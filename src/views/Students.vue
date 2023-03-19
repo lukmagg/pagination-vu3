@@ -118,7 +118,7 @@
 
         this.books = response.data.data.books
 
-        //console.log(response.data.data.books); // data
+        console.log(response.data.data.books); // data
       }
     },
 
