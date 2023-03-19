@@ -50,8 +50,6 @@
           </table>
         </div>
       </div>
-  
-  
     </div>
   </template>
   
@@ -81,7 +79,9 @@
         books: []
       } 
     },
-
+    mounted(){
+      this.getBooks()
+    },
     methods:{
       addUser(){
         let data = {
@@ -118,20 +118,21 @@
 
         this.books = response.data.data.books
 
-        console.log(response.data.data.books); // data
-
-
+        //console.log(response.data.data.books); // data
       }
     },
 
-    mounted(){
-      this.getBooks()
-    }
+    computed:{
+
+    },
+
+
+    
   }
   </script>
   
   <style>
-  
+
   </style>
   
   

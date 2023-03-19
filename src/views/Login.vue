@@ -22,12 +22,14 @@
                 </form>
             </div>
         </div>
+        
 </template>
 
 
 <script>
 import axios from 'axios';
 import localforage from 'localforage';
+
 
 export default{
     name: 'Login',
@@ -72,15 +74,19 @@ export default{
             if(response.data.data === null){
                 console.log('error')
             } else {
-                this.$router.push('/students')
                 await localforage.setItem('token', response.data.data.signin.token); 
-            }
 
-            
-            
-      
+                this.$store.commit('setIsLogged', true)         
+                
+                this.$router.push('/')
+            }        
         }
-    }
+    },
+
+    mounted() {
+
+    } 
+
 
 }
 </script>
