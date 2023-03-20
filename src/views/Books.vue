@@ -33,7 +33,7 @@
     <p>currentPage:{{ currentPage }}</p>
     <p>totalPages:{{ totalPages }}</p>
     <p>offset:{{ offset }}</p>
-
+    <p>Circle CI</p>
   </template>
   
   <script>
