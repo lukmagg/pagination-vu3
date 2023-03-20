@@ -1,0 +1,11 @@
+version: 2.1
+
+jobs:
+  saluda:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo hola
+
+    
+    
