@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import VuexPersistence from "vuex-persist";
 
 const store = createStore({
     state () {
@@ -11,7 +12,12 @@ const store = createStore({
           state.isLogged = value
         },
 
-      }
+      },
+      plugins: [
+        new VuexPersistence({
+          store: window.localStorage
+        }).plugin
+      ]
 
 })
 
