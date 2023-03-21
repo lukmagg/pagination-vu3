@@ -34,7 +34,7 @@
     <p>totalPages:{{ totalPages }}</p>
     <p>offset:{{ offset }}</p>
     <p>Circle CI</p>
-  </template>
+  </template> 
   
   <script>
   import axios from 'axios'
