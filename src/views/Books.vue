@@ -23,13 +23,18 @@
           </table>
 
           <ul class="pagination">
-            <li v-for="page in pages" v-bind:key="page"><a href="#!"></a></li>
+            <li v-for="page in totalPages" 
+              :key="page" 
+              :class="{active: page === currentPage }"
+            >
+              <a @click="nextPage(page)">{{ page }}</a>
+            </li>
           </ul>
         </div>
       </div>
     </div>
-    <button @click="prevPage" v-show="currentPage > 1">Prev</button>
-    <button @click="nextPage" v-show="currentPage < totalPages ">Next</button>
+    <button @click="nextPage(currentPage - 1)" v-show="currentPage > 1">Prev</button>
+    <button @click="nextPage(currentPage + 1)" v-show="currentPage < totalPages ">Next</button>
     <p>currentPage:{{ currentPage }}</p>
     <p>totalPages:{{ totalPages }}</p>
     <p>offset:{{ offset }}</p>
@@ -44,30 +49,31 @@
     name: 'Books',
     data(){
       return { 
-        name: '',
-        surname: '',
-        age: 0,
         books: [],
         offset:0,
-        limit:10,
+        limit:4,
         totalBooks:0,
         totalPages:0,
         currentPage:1,
+        token:'',
+        headers:{}
       } 
     },
     async mounted(){
-      this.initBooks();
+      await this.initAuthentication();
+      await this.nextPage(1);
       await this.countBooks();
-      this.totalPages = this.totalBooks / this.limit;
+      this.totalPages = Math.ceil(this.totalBooks / this.limit);
     },
     methods:{
-      
-      async countBooks(){
-        const token = await localforage.getItem('token')
-        const headers = {
+      async initAuthentication(){
+        this.token = await localforage.getItem('token');
+        this.headers = {
           "content-type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${this.token}`
         };
+      },
+      async countBooks(){
         const graphqlQuery = {
             "operationName": "countTotalBooks",
             "query": `query countTotalBooks { count }`,
@@ -75,18 +81,17 @@
         };
         const response = await axios({
           method: 'post',
-          headers: headers,
+          headers: this.headers,
           data: graphqlQuery
         });
-
         this.totalBooks = response.data.data.count
       },
-      async initBooks () {
-        const token = await localforage.getItem('token')
-        const headers = {
-          "content-type": "application/json",
-          "Authorization": `Bearer ${token}`
-        };
+      async nextPage(page) {
+      
+          this.offset = (page - 1) * this.limit;
+
+          this.currentPage = page;
+
         const graphqlQuery = {
             "operationName": "nextPage",
             "query": `query nextPage { books(offset:${this.offset}, limit:${this.limit}){
@@ -98,69 +103,11 @@
         };
         const response = await axios({
           method: 'post',
-          headers: headers,
+          headers: this.headers,
           data: graphqlQuery
         });
-
-        this.books = response.data.data.books       
+        this.books = response.data.data.books        
       },
-      async nextPage () {
-        this.offset += this.limit;
-        this.currentPage++;
-        const token = await localforage.getItem('token')
-        const headers = {
-          "content-type": "application/json",
-          "Authorization": `Bearer ${token}`
-        };
-        const graphqlQuery = {
-            "operationName": "nextPage",
-            "query": `query nextPage { books(offset:${this.offset}, limit:${this.limit}){
-              id
-              title
-              author
-            } }`,
-            "variables": {}
-        };
-        const response = await axios({
-          method: 'post',
-          headers: headers,
-          data: graphqlQuery
-        });
-
-        this.books = response.data.data.books    
-               
-      },
-
-      async prevPage () {
-        this.offset -= this.limit; 
-        this.currentPage--;
-        const token = await localforage.getItem('token')
-        const headers = {
-          "content-type": "application/json",
-          "Authorization": `Bearer ${token}`
-        };
-        const graphqlQuery = {
-            "operationName": "prevPage",
-            "query": `query prevPage { books(offset:${this.offset}, limit:${this.limit}){
-              id
-              title
-              author
-            } }`,
-            "variables": {}
-        };
-        const response = await axios({
-          method: 'post',
-          headers: headers,
-          data: graphqlQuery
-        });
-
-        
-
-        this.books = response.data.data.books    
-               
-      },
-
-
     },
 
     computed:{
