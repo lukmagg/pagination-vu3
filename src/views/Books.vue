@@ -23,22 +23,22 @@
           </table>
 
           <ul class="pagination">
-            <li v-for="page in totalPages" 
-              :key="page" 
-              :class="{active: page === currentPage }"
-            >
-              <a @click="nextPage(page)">{{ page }}</a>
-            </li>
+            <li><a href="#!" @click="nextPage(1)" v-show="currentPage > 1"><i class="material-icons">first_page</i></a></li>
+            <li><a href="#!" @click="nextPage(currentPage - 1)" v-show="currentPage > 1"><i class="material-icons">chevron_left</i></a></li>
+            <template v-for="page in totalPages" :key="page">
+              <li
+                v-if="page < currentPage + 3 & page > currentPage - 3"  
+                :class="{active: page === currentPage }"
+              >
+                <a href="#!" @click="nextPage(page)">{{ page }}</a>
+              </li>
+            </template>
+            <li><a href="#!" @click="nextPage(currentPage + 1)" v-show="currentPage < totalPages "><i class="material-icons">chevron_right</i></a></li>
+            <li><a href="#!" @click="nextPage(totalPages)" v-show="currentPage < totalPages "><i class="material-icons">last_page</i></a></li>
           </ul>
         </div>
       </div>
     </div>
-    <button @click="nextPage(currentPage - 1)" v-show="currentPage > 1">Prev</button>
-    <button @click="nextPage(currentPage + 1)" v-show="currentPage < totalPages ">Next</button>
-    <p>currentPage:{{ currentPage }}</p>
-    <p>totalPages:{{ totalPages }}</p>
-    <p>offset:{{ offset }}</p>
-    <p>Circle CI</p>
   </template> 
   
   <script>
@@ -51,7 +51,7 @@
       return { 
         books: [],
         offset:0,
-        limit:4,
+        limit:8,
         totalBooks:0,
         totalPages:0,
         currentPage:1,
